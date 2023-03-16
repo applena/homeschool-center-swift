@@ -7,52 +7,39 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
-    @State var studentName: String = ""
-    @State var studentGrade: String = ""
-    @State var password: String = ""
-    @State var confirmPassword: String = ""
-    
+    @State private var name = ""
+    @State private var gradeString = ""
     
     var body: some View {
         VStack {
-            Text("Welcome to Homeschool Cental").font(.largeTitle)
-            TextField(
-                    "Student Name",
-                    text: $studentName
-            )
+            TextField("Student Name", text: $name)
+                .padding()
+            TextField("Student Grade", text: $gradeString)
+                .padding()
+            
+            Button(action: saveStudentInfo) {
+                Text("Save")
+            }
             .padding()
-            .onSubmit {
-                    print(studentName)
-                }
-            TextField(
-                    "Student Grade",
-                    text: $studentGrade
-            ).padding()
-            TextField(
-                    "Password",
-                    text: $password
-            ).padding()
-            TextField(
-                    "Confirm Password",
-                    text: $confirmPassword
-            ).padding()
-            Spacer()
-            Button(
-                action:{
-                    print("button was pressed")
-                },
-                label: {
-                    Text("Sign Up")
-                }
-            )
         }
-        .multilineTextAlignment(.center)
-        .padding([.top], 50)
-  
     }
-
+    
+    func saveStudentInfo() {
+        if let grade = Int(gradeString) {
+            // Save student info to UserDefaults
+            var studentInfo = UserDefaults.standard.dictionary(forKey: "studentInfo") as? [String: Int] ?? [String: Int]()
+            studentInfo[name] = grade
+            UserDefaults.standard.setValue(studentInfo, forKey: "studentInfo")
+        } else {
+            // Display error message
+            print("ERROR - something went wrong")
+        }
+        print(UserDefaults.standard)
+    }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
