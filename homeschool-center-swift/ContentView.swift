@@ -9,9 +9,10 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State private var showSecondView = false
     @State private var name = ""
     @State private var gradeString = ""
+    @State var noStudentInfo: Bool = true
+
     
     var body: some View {
         NavigationView{
@@ -27,12 +28,20 @@ struct ContentView: View {
                 Button(action: saveStudentInfo) {
                     Text("Save")
                 }
-                NavigationLink(destination: SecondView(), isActive: $showSecondView) {
+                NavigationLink(destination: SecondView(), isActive: $noStudentInfo) {
                     EmptyView()
                 }
                
             }
         }
+//        .onAppear {
+//                    // Check if we have user info
+//            doesNotHaveStudentInfo = ((UserDefaults.standard.dictionary(forKey: "StudentInfo")?.isEmpty) != nil)
+//                }
+        .onAppear {
+            // Check if user is logged in
+            noStudentInfo = !UserDefaults.standard.bool(forKey: "studentInfo")
+                }
     }
     
     func saveStudentInfo() {
@@ -41,7 +50,7 @@ struct ContentView: View {
             var studentInfo = UserDefaults.standard.dictionary(forKey: "studentInfo") as? [String: Int] ?? [String: Int]()
             studentInfo[name] = grade
             UserDefaults.standard.setValue(studentInfo, forKey: "studentInfo")
-            self.showSecondView = true
+            self.noStudentInfo = true
         } else {
             // Display error message
             print("ERROR - something went wrong")
